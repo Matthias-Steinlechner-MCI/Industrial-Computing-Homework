@@ -1,0 +1,10 @@
+[project]
+name = "part1-option-a"
+version = "0.1.0"
+description = "MCP Math & Database Tool Server with a ReAct agent loop over LiteLLM"
+requires-python = ">=3.11"
+dependencies = [
+    "fastmcp>=3.4.4",
+    "openai>=2.46.0",
+    "python-dotenv>=1.2.2",
+]

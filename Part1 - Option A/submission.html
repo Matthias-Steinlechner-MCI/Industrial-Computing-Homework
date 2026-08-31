@@ -1,0 +1,455 @@
+<title>MCP Math &amp; Database Tool Server</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+
+<style>
+  :root {
+    --paper:      #f4f6f7;
+    --card:       #ffffff;
+    --ink:        #16212b;
+    --ink-soft:   #55636f;
+    --ink-faint:  #8a97a2;
+    --rule:       #d3dae0;
+    --rule-soft:  #e4e9ed;
+    --signal:     #9a6a05;
+    --signal-bg:  #f6ecd6;
+    --steel:      #2c5b7a;
+
+    --display: "IBM Plex Sans Condensed", "Helvetica Neue", Arial, sans-serif;
+    --body:    "Source Serif 4", Georgia, "Times New Roman", serif;
+    --mono:    "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:     #10171e;
+      --card:      #161f28;
+      --ink:       #e3e9ee;
+      --ink-soft:  #a3b1bc;
+      --ink-faint: #6f7d89;
+      --rule:      #2b3a46;
+      --rule-soft: #223038;
+      --signal:    #e0aa4a;
+      --signal-bg: #2a2113;
+      --steel:     #7fb3d5;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --paper:     #10171e;
+    --card:      #161f28;
+    --ink:       #e3e9ee;
+    --ink-soft:  #a3b1bc;
+    --ink-faint: #6f7d89;
+    --rule:      #2b3a46;
+    --rule-soft: #223038;
+    --signal:    #e0aa4a;
+    --signal-bg: #2a2113;
+    --steel:     #7fb3d5;
+  }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 16px;
+    line-height: 1.6;
+    margin: 0;
+    padding: 40px 24px 72px;
+  }
+
+  .sheet {
+    max-width: 860px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 34px;
+  }
+
+  /* ---------- Kopf ---------- */
+  .masthead { display: flex; flex-direction: column; gap: 14px; }
+
+  .stamp {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--signal);
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .stamp::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+  }
+
+  h1 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(30px, 5vw, 44px);
+    line-height: 1.08;
+    letter-spacing: -0.015em;
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  .standfirst {
+    margin: 0;
+    max-width: 62ch;
+    color: var(--ink-soft);
+    font-size: 17px;
+  }
+
+  /* ---------- Datenblatt-Kopfzeile ---------- */
+  .specs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+  .spec { background: var(--card); padding: 11px 14px; }
+  .spec dt {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 0 0 3px;
+  }
+  .spec dd {
+    margin: 0;
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 15px;
+  }
+
+  /* ---------- Abschnitte ---------- */
+  section { display: flex; flex-direction: column; gap: 14px; }
+
+  h2 {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin: 0;
+    padding-bottom: 7px;
+    border-bottom: 2px solid var(--ink);
+  }
+
+  p { margin: 0; max-width: 68ch; }
+
+  /* ---------- Tools ---------- */
+  .tools { display: flex; flex-direction: column; gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+  .tool {
+    background: var(--card);
+    padding: 15px 18px;
+    display: grid;
+    grid-template-columns: 30px 1fr;
+    gap: 4px 16px;
+    align-items: baseline;
+  }
+  .tool .idx {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--signal);
+    font-weight: 500;
+  }
+  .tool code {
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .tool .kind {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-left: 8px;
+  }
+  .tool p { grid-column: 2; font-size: 15px; color: var(--ink-soft); }
+
+  /* ---------- Code / Diagramm / Log ---------- */
+  .block {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--signal);
+    overflow-x: auto;
+  }
+  .block pre {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.65;
+    margin: 0;
+    padding: 15px 18px;
+    color: var(--ink);
+    white-space: pre;
+  }
+  .caption {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--ink-faint);
+  }
+
+  /* ---------- Rechenweg ---------- */
+  table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+  caption {
+    text-align: left;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--ink-faint);
+    padding-bottom: 7px;
+  }
+  th, td { padding: 7px 12px; border-bottom: 1px solid var(--rule-soft); text-align: right; font-size: 14.5px; }
+  th:first-child, td:first-child { text-align: left; font-family: var(--mono); font-size: 13px; }
+  thead th {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    border-bottom: 1px solid var(--rule);
+  }
+  tfoot td { font-weight: 600; border-bottom: none; border-top: 2px solid var(--ink); }
+  .total { color: var(--signal); }
+
+  /* ---------- Links / Platzhalter ---------- */
+  .slots { display: flex; flex-direction: column; gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+  .slot { background: var(--card); padding: 13px 16px; display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: baseline; }
+  .slot .label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    min-width: 130px;
+  }
+  .slot .value { font-family: var(--mono); font-size: 13px; word-break: break-all; }
+  .todo {
+    background: var(--signal-bg);
+    color: var(--signal);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    padding: 2px 7px;
+    border: 1px dashed var(--signal);
+  }
+  a { color: var(--steel); text-underline-offset: 2px; }
+  a:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+
+  .shot {
+    border: 1px dashed var(--rule);
+    background: var(--card);
+    padding: 26px 18px;
+    text-align: center;
+    color: var(--ink-faint);
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.8;
+  }
+  .shots { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; }
+
+  footer {
+    border-top: 1px solid var(--rule);
+    padding-top: 13px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-faint);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+  }
+
+  @media print {
+    body { background: #fff; padding: 0; font-size: 11pt; }
+    .sheet { gap: 20px; max-width: none; }
+    .shot { padding: 14px; }
+  }
+</style>
+
+<div class="sheet">
+
+  <header class="masthead">
+    <div class="stamp">Industrial Computing · Homework Part 1 · Option A</div>
+    <h1>MCP Math &amp; Database Tool Server</h1>
+    <p class="standfirst">
+      Ein MCP-Server mit drei Werkzeugen — SQL-Lookup, Rabatt-Formelmaschine und
+      Audit-Log — angesteuert von einem ReAct-Agenten über einen lokalen
+      LiteLLM-Proxy. Aufgebaut auf dem Basiscode aus Sample 3 und Sample 4 der
+      Vorlesung.
+    </p>
+  </header>
+
+  <dl class="specs">
+    <div class="spec"><dt>Track</dt><dd>Option A · Technical</dd></div>
+    <div class="spec"><dt>Sprache</dt><dd>Python 3.12</dd></div>
+    <div class="spec"><dt>MCP-Framework</dt><dd>FastMCP</dd></div>
+    <div class="spec"><dt>Gateway</dt><dd>LiteLLM :4000</dd></div>
+    <div class="spec"><dt>Modell</dt><dd>Azure gpt-5-mini</dd></div>
+  </dl>
+
+  <section>
+    <h2>Aufbau</h2>
+    <p>
+      Der Client kennt die Werkzeuge nicht im Voraus. Er fragt den MCP-Server
+      nach <code>list_tools()</code>, übersetzt die zurückgegebenen Schemas ins
+      OpenAI-Function-Format und reicht sie an das Modell weiter. Ein neues Tool
+      im Server erscheint deshalb ohne eine einzige Codeänderung im Client.
+    </p>
+    <div class="block">
+<pre>client.py  ──HTTP──►  LiteLLM-Proxy  ──►  Azure OpenAI (gpt-5-mini)
+   │                  localhost:4000       Gemini als Ausweichpfad
+   │
+   └──MCP streamable-http──►  server.py   localhost:8010/mcp
+                                ├── lookup_products          → SQLite
+                                ├── compute_tiered_discount  → Formelmaschine
+                                ├── append_audit_event       → audit_log.txt
+                                ├── resource audit://log
+                                └── resource inventory://schema</pre>
+    </div>
+    <p class="caption">Der Modellname <code>gpt-4o-mini</code> ist nur ein Alias im Proxy — dahinter liegt ein Azure-Deployment <code>gpt-5-mini</code>. Anbieterwechsel ist Konfiguration, nicht Code.</p>
+  </section>
+
+  <section>
+    <h2>Die drei Werkzeuge</h2>
+    <div class="tools">
+      <article class="tool">
+        <div class="idx">01</div>
+        <div><code>lookup_products</code><span class="kind">sqlite3</span></div>
+        <p>
+          Fragt die Tabelle <code>products</code> ab — Freitext auf SKU und Name,
+          Kategoriefilter, optional nur lieferbare Artikel. Die Query ist
+          parametrisiert: Da die Argumente vom Sprachmodell stammen, wäre
+          String-Verkettung hier eine SQL-Injection-Lücke.
+        </p>
+      </article>
+      <article class="tool">
+        <div class="idx">02</div>
+        <div><code>compute_tiered_discount</code><span class="kind">Formelmaschine</span></div>
+        <p>
+          Marginale Mengenstaffel in fünf Stufen (0 / 5 / 12 / 18 / 25 Prozent),
+          darauf multiplikativ ein Kundenstatus-Nachlass. Gibt die vollständige
+          Aufschlüsselung zurück, nicht nur den Endbetrag — damit das Modell die
+          Rechnung wiedergeben kann, statt sie zu schätzen.
+        </p>
+      </article>
+      <article class="tool">
+        <div class="idx">03</div>
+        <div><code>append_audit_event</code><span class="kind">Dateiresource</span></div>
+        <p>
+          Hängt <code>Zeitstempel | event | details</code> an
+          <code>logs/audit_log.txt</code> an und meldet Zeileninhalt und
+          Zeilennummer zurück. Derselbe Inhalt ist über die MCP-Resource
+          <code>audit://log</code> lesbar: Das Tool schreibt, die Resource liest.
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <section>
+    <h2>Rechenweg der Formelmaschine</h2>
+    <p>
+      Die Staffel wirkt <em>marginal</em> — jede Stufe gilt nur für die Stück in
+      ihrer eigenen Bandbreite, nicht rückwirkend für die ganze Bestellung. Das
+      Beispiel stammt aus Szenario 2: 250 Näherungssensoren M12 zu 34,20 € für
+      einen Gold-Kunden.
+    </p>
+    <table>
+      <caption>Ergebnis unabhängig nachgerechnet, Abweichung null</caption>
+      <thead>
+        <tr><th>Stufe</th><th>Stück</th><th>Rabatt</th><th>Betrag</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1 – 9</td><td>9</td><td>0 %</td><td>307,80</td></tr>
+        <tr><td>10 – 49</td><td>40</td><td>5 %</td><td>1.299,60</td></tr>
+        <tr><td>50 – 199</td><td>150</td><td>12 %</td><td>4.514,40</td></tr>
+        <tr><td>200 – 499</td><td>51</td><td>18 %</td><td>1.430,24</td></tr>
+        <tr><td>Gold-Nachlass</td><td>—</td><td>4 %</td><td>−302,08</td></tr>
+      </tbody>
+      <tfoot>
+        <tr><td>Endpreis</td><td>250</td><td class="total">−15,21 %</td><td class="total">7.249,96</td></tr>
+      </tfoot>
+    </table>
+    <p class="caption">Listenpreis 8.550,00 € · Ersparnis 1.300,04 €</p>
+  </section>
+
+  <section>
+    <h2>Ausschnitt aus dem Ausführungsprotokoll</h2>
+    <p>
+      Szenario 2 verkettet alle drei Werkzeuge: Datenbankabfrage, Rabattrechnung,
+      Protokolleintrag. Der vollständige Lauf liegt in
+      <code>logs/execution_log.txt</code>.
+    </p>
+    <div class="block">
+<pre>SZENARIO 2: Ein Kunde mit Gold-Status will 250 Stueck des Naeherungssensors M12.
+
+[Reasoning 1] Anfrage an das Modell (gpt-4o-mini) ...
+[Action]      lookup_products({"search": "Näherungssensor M12", "limit": 5})
+[Observation] [{"sku":"SKU-2001","name":"Näherungssensor M12","category":"sensors",
+               "unit_price":34.2,"stock":870,"warehouse":"Innsbruck"}]
+
+[Reasoning 2] Anfrage an das Modell (gpt-4o-mini) ...
+[Action]      compute_tiered_discount({"unit_price": 34.2, "quantity": 250,
+                                       "customer_tier": "gold"})
+[Observation] {"list_total":8550.0, ... "final_total":7249.96,
+               "total_saved":1300.04, "effective_discount":0.1521}
+
+[Reasoning 3] Anfrage an das Modell (gpt-4o-mini) ...
+[Action]      append_audit_event({"event": "quote_created", "details": "..."})
+[Observation] {"written":"2026-08-31T18:28:03+00:00 | quote_created | ...",
+               "line_number":1}
+
+[Final Answer] Endpreis 7.249,96 EUR, effektiver Gesamtrabatt 15,21 %.</pre>
+    </div>
+  </section>
+
+  <section>
+    <h2>Abgabe</h2>
+    <div class="slots">
+      <div class="slot">
+        <span class="label">Repository</span>
+        <span class="value"><span class="todo">einfügen</span> github.com/…/Industrial-Computing-Homework</span>
+      </div>
+      <div class="slot">
+        <span class="label">Pfad im Repo</span>
+        <span class="value">Part1 - Option A/</span>
+      </div>
+      <div class="slot">
+        <span class="label">Einstieg</span>
+        <span class="value">README.md — Setup, Ausführung, Szenarien</span>
+      </div>
+      <div class="slot">
+        <span class="label">Protokolle</span>
+        <span class="value">logs/execution_log.txt · logs/audit_log.txt · logs/server.log</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Screenshots</h2>
+    <div class="shots">
+      <div class="shot">Terminal — MCP-Server<br>mit Tool-Registrierung</div>
+      <div class="shot">Terminal — ReAct-Lauf<br>Reasoning / Action / Observation</div>
+      <div class="shot">LiteLLM Admin-UI<br>Request-Log der drei Szenarien</div>
+    </div>
+    <p class="caption">Platzhalter — eigene Aufnahmen einsetzen.</p>
+  </section>
+
+  <footer>
+    <span>Matthias Steinlechner</span>
+    <span>MCI · DIBSE Master · Semester 3</span>
+    <span>Industrial Computing · Ch. Maurer</span>
+  </footer>
+
+</div>

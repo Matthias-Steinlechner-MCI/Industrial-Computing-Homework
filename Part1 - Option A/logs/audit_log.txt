@@ -1,0 +1,2 @@
+2026-08-31T18:28:03+00:00 | quote_created | Kunde: Gold-Status; Produkt: Näherungssensor M12 (SKU-2001); Menge: 250; Listenpreis/Stück: 34.2 EUR; Endpreis: 7249.96 EUR; Datum: 2026-08-31
+2026-08-31T18:28:29+00:00 | stockout_review | Identified out-of-stock items: SKU-2003 — Druckaufnehmer 0-10bar (warehouse: Wien, stock: 0). Reviewed on 2026-08-31.
