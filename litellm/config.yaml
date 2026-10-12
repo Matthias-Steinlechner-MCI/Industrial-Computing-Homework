@@ -1,18 +1,19 @@
-# Minimale LiteLLM-Konfiguration fuer dieses Projekt.
-# Schluessel kommen aus Umgebungsvariablen, nie aus dieser Datei.
+# LiteLLM-Proxy fuer beide Hausuebungen.
+#   Part 1: LLM-Gateway fuer den ReAct-Client (Alias gpt-4o-mini)
+#   Part 2: zusaetzlich Agent-Registry und A2A-Gateway (braucht Postgres)
 #
-# Start (Postgres noetig, sonst gibt es keine Agent-Registry):
-#   $env:GEMINI_API_KEY     = "<dein Key aus Google AI Studio>"
-#   $env:LITELLM_MASTER_KEY = "sk-1234"
-#   $env:DATABASE_URL       = "postgresql://<user>:<pw>@localhost:5432/litellm"
-#   $env:SSL_CERT_FILE      = "<Bundle mit Firmen-/Antivirus-Root, falls HTTPS gescannt wird>"
-#   litellm --config litellm/config.example.yaml --port 4000
+# Schluessel stehen nie hier, sondern in litellm/.env (siehe .env.example).
+# Start: .\litellm\start_proxy.ps1
 
 model_list:
+  # Alias, den die Clients ansprechen. Welches Modell dahinter steckt, ist
+  # reine Konfiguration - das ist der Zweck des Gateways.
   - model_name: gpt-4o-mini
     litellm_params:
       model: gemini/gemini-3.6-flash
       api_key: os.environ/GEMINI_API_KEY
+
+  # Part 2: jeder Agent auf einem eigenen Modell (Free Tier: 20 Requests/Tag pro Modell)
   - model_name: gemini-3.5-flash
     litellm_params:
       model: gemini/gemini-3.5-flash
@@ -31,10 +32,13 @@ model_list:
       api_key: os.environ/GEMINI_API_KEY
 
 litellm_settings:
+  # Nicht unterstuetzte Parameter (z.B. temperature bei Reasoning-Modellen)
+  # still entfernen statt mit HTTP 400 abzubrechen.
   drop_params: true
 
 general_settings:
-  # A2A-Agenten auf localhost freigeben (SSRF-Schutz blockt sie sonst)
+  # Part 2: A2A-Agenten auf localhost freigeben. LiteLLM blockt private
+  # Adressen als SSRF-Schutz, ausser sie stehen hier.
   user_url_allowed_hosts:
     - "localhost:8101"
     - "localhost:8102"

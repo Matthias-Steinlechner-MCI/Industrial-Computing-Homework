@@ -1,7 +1,7 @@
 # Startet die drei Fach-Agenten, jeden als eigenen Prozess in eigenem Fenster.
 # Danach registriert es sie in der LiteLLM-Registry.
 #
-# Voraussetzung: LiteLLM-Proxy laeuft (..\..\LiteLLM\start_proxy.ps1)
+# Voraussetzung: LiteLLM-Proxy laeuft (..\litellm\start_proxy.ps1)
 # Aufruf:        .\start_agents.ps1
 
 $ErrorActionPreference = "Stop"

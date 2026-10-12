@@ -7,8 +7,8 @@ LiteLLM-Proxy ansteuert. Aufgebaut auf dem Basiscode der Vorlesung
 ## Architektur
 
 ```
-  client.py  ──HTTP──►  LiteLLM-Proxy  ──►  Azure OpenAI (gpt-5-mini)
-     │                  localhost:4000       oder Gemini als Ausweich
+  client.py  ──HTTP──►  LiteLLM-Proxy  ──►  LLM hinter dem Alias gpt-4o-mini
+     │                  localhost:4000       (Konfiguration, siehe unten)
      │
      └──MCP streamable-http──►  server.py  (localhost:8010/mcp)
                                    ├── lookup_products         → SQLite
@@ -72,7 +72,10 @@ MCP-Resource `audit://log` lesbar — Tool schreibt, Resource liest.
 
 ## Setup
 
-Voraussetzung: Python ≥ 3.11 und [uv](https://docs.astral.sh/uv/).
+Voraussetzung: Python ≥ 3.11, [uv](https://docs.astral.sh/uv/) und der
+LiteLLM-Proxy aus der Repo-Wurzel — Installation und Konfiguration stehen in
+der [Haupt-README](../README.md#litellm-proxy). Für Part 1 genügt ein
+Gemini-Key, Postgres wird nicht gebraucht.
 
 ```bash
 uv sync
@@ -104,10 +107,10 @@ aus, was an einer cp1252-Konsole sonst mit `UnicodeEncodeError` abbricht:
 
 Drei Terminals bzw. drei Schritte:
 
-**1. LiteLLM-Proxy** (liegt im Nachbarordner `../../LiteLLM`)
+**1. LiteLLM-Proxy** (aus der Repo-Wurzel, eigenes Fenster)
 
 ```bash
-& "..\..\LiteLLM\start_proxy.ps1"
+.\litellm\start_proxy.ps1
 ```
 
 **2. MCP-Server**
@@ -156,12 +159,15 @@ erzwingen:
 ## Anmerkungen zur Umsetzung
 
 **Modellname als Alias.** `LITELLM_DEFAULT_MODEL=gpt-4o-mini` ist nur ein
-Alias im Proxy. Dahinter liegt real ein Azure-Deployment `gpt-5-mini`. Der
-Wechsel des Anbieters ist damit eine Konfigurationsänderung im Proxy, keine
-Codeänderung — genau der Zweck eines LLM-Gateways.
+Alias im Proxy. Die Protokolle in `logs/` entstanden am 31.08.2026 mit einem
+Azure-Deployment `gpt-5-mini` hinter diesem Alias. Nach dem Ablauf des
+Azure-Testabos zeigt der Alias in [`litellm/config.yaml`](../litellm/config.yaml)
+auf Gemini — der Client blieb dabei unverändert. Der Wechsel des Anbieters ist
+eine Konfigurationsänderung im Proxy, keine Codeänderung: genau der Zweck
+eines LLM-Gateways.
 
-**`temperature` und Reasoning-Modelle.** `gpt-5-mini` akzeptiert nur den
-Default-Wert für `temperature`. Der Proxy ist deshalb mit
+**`temperature` und Reasoning-Modelle.** Reasoning-Modelle wie `gpt-5-mini`
+akzeptieren nur den Default-Wert für `temperature`. Der Proxy ist deshalb mit
 `litellm_settings.drop_params: true` konfiguriert, was nicht unterstützte
 Parameter still entfernt, statt den Request mit HTTP 400 abzuweisen.
 

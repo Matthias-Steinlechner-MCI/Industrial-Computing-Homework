@@ -1,0 +1,477 @@
+<title>A2A Order Coordinator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+
+<style>
+  :root {
+    --paper:      #f4f6f7;
+    --card:       #ffffff;
+    --ink:        #16212b;
+    --ink-soft:   #55636f;
+    --ink-faint:  #8a97a2;
+    --rule:       #d3dae0;
+    --rule-soft:  #e4e9ed;
+    --signal:     #9a6a05;
+    --signal-bg:  #f6ecd6;
+    --steel:      #2c5b7a;
+
+    --display: "IBM Plex Sans Condensed", "Helvetica Neue", Arial, sans-serif;
+    --body:    "Source Serif 4", Georgia, "Times New Roman", serif;
+    --mono:    "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:     #10171e;
+      --card:      #161f28;
+      --ink:       #e3e9ee;
+      --ink-soft:  #a3b1bc;
+      --ink-faint: #6f7d89;
+      --rule:      #2b3a46;
+      --rule-soft: #223038;
+      --signal:    #e0aa4a;
+      --signal-bg: #2a2113;
+      --steel:     #7fb3d5;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --paper:     #10171e;
+    --card:      #161f28;
+    --ink:       #e3e9ee;
+    --ink-soft:  #a3b1bc;
+    --ink-faint: #6f7d89;
+    --rule:      #2b3a46;
+    --rule-soft: #223038;
+    --signal:    #e0aa4a;
+    --signal-bg: #2a2113;
+    --steel:     #7fb3d5;
+  }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 16px;
+    line-height: 1.6;
+    margin: 0;
+    padding: 40px 24px 72px;
+  }
+
+  .sheet {
+    max-width: 860px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 34px;
+  }
+
+  /* ---------- Kopf ---------- */
+  .masthead { display: flex; flex-direction: column; gap: 14px; }
+
+  .stamp {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--signal);
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .stamp::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+  }
+
+  h1 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(30px, 5vw, 44px);
+    line-height: 1.08;
+    letter-spacing: -0.015em;
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  .standfirst {
+    margin: 0;
+    max-width: 62ch;
+    color: var(--ink-soft);
+    font-size: 17px;
+  }
+
+  /* ---------- Datenblatt-Kopfzeile ---------- */
+  .specs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+  .spec { background: var(--card); padding: 11px 14px; }
+  .spec dt {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin: 0 0 3px;
+  }
+  .spec dd {
+    margin: 0;
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 15px;
+  }
+
+  /* ---------- Abschnitte ---------- */
+  section { display: flex; flex-direction: column; gap: 14px; }
+
+  h2 {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin: 0;
+    padding-bottom: 7px;
+    border-bottom: 2px solid var(--ink);
+  }
+
+  p { margin: 0; max-width: 68ch; }
+
+  /* ---------- Tools ---------- */
+  .tools { display: flex; flex-direction: column; gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+  .tool {
+    background: var(--card);
+    padding: 15px 18px;
+    display: grid;
+    grid-template-columns: 42px 1fr;
+    gap: 4px 16px;
+    align-items: baseline;
+  }
+  .tool .idx {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--signal);
+    font-weight: 500;
+  }
+  .tool code {
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .tool .kind {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-left: 8px;
+  }
+  .tool p { grid-column: 2; font-size: 15px; color: var(--ink-soft); }
+
+  /* ---------- Code / Diagramm / Log ---------- */
+  .block {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--signal);
+    overflow-x: auto;
+  }
+  .block pre {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.65;
+    margin: 0;
+    padding: 15px 18px;
+    color: var(--ink);
+    white-space: pre;
+  }
+  .caption {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--ink-faint);
+  }
+
+  /* ---------- Rechenweg ---------- */
+  table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+  caption {
+    text-align: left;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--ink-faint);
+    padding-bottom: 7px;
+  }
+  th, td { padding: 7px 12px; border-bottom: 1px solid var(--rule-soft); text-align: right; font-size: 14.5px; }
+  th:first-child, td:first-child { text-align: left; font-family: var(--mono); font-size: 13px; }
+  thead th {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    border-bottom: 1px solid var(--rule);
+  }
+  tfoot td { font-weight: 600; border-bottom: none; border-top: 2px solid var(--ink); }
+  .total { color: var(--signal); }
+
+  /* ---------- Links / Platzhalter ---------- */
+  .slots { display: flex; flex-direction: column; gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+  .slot { background: var(--card); padding: 13px 16px; display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: baseline; }
+  .slot .label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    min-width: 130px;
+  }
+  .slot .value { font-family: var(--mono); font-size: 13px; word-break: break-all; }
+  .todo {
+    background: var(--signal-bg);
+    color: var(--signal);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    padding: 2px 7px;
+    border: 1px dashed var(--signal);
+  }
+  a { color: var(--steel); text-underline-offset: 2px; }
+  a:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+
+  .shot {
+    border: 1px dashed var(--rule);
+    background: var(--card);
+    padding: 26px 18px;
+    text-align: center;
+    color: var(--ink-faint);
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.8;
+  }
+  .shots { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; }
+
+  footer {
+    border-top: 1px solid var(--rule);
+    padding-top: 13px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-faint);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+  }
+
+  @media print {
+    body { background: #fff; padding: 0; font-size: 11pt; }
+    .sheet { gap: 20px; max-width: none; }
+    .shot { padding: 14px; }
+  }
+</style>
+
+<div class="sheet">
+
+  <header class="masthead">
+    <div class="stamp">Industrial Computing · Homework Part 2 · Option A</div>
+    <h1>Distributed A2A System with Dynamic Registry Lookup</h1>
+    <p class="standfirst">
+      Ein Kunde fragt nach Preis und Liefertermin für Industriekomponenten.
+      Drei Fach-Agenten auf eigenen Ports — jeder mit eigenem System — lösen die
+      Anfrage gemeinsam. Ein Koordinator findet sie zur Laufzeit in der
+      LiteLLM-Registry, spricht sie per A2A an und prüft nach jeder Runde, ob
+      die Anfrage vollständig beantwortet ist.
+    </p>
+  </header>
+
+  <dl class="specs">
+    <div class="spec"><dt>Track</dt><dd>Option A · Technical</dd></div>
+    <div class="spec"><dt>Agenten</dt><dd>3 + Koordinator</dd></div>
+    <div class="spec"><dt>Protokoll</dt><dd>A2A · JSON-RPC</dd></div>
+    <div class="spec"><dt>Registry</dt><dd>LiteLLM + Postgres</dd></div>
+    <div class="spec"><dt>Framework</dt><dd>fasta2a · pydantic-ai</dd></div>
+  </dl>
+
+  <section>
+    <h2>Aufbau</h2>
+    <p>
+      Jeder Agent sieht nur sein eigenes System. Wer Daten aus einem anderen
+      braucht, muss den zuständigen Agenten fragen — die Zusammenarbeit ist
+      damit erzwungen, nicht nur behauptet. Die Agenten laufen bewusst auf
+      verschiedenen Modellen; für die Zusammenarbeit spielt das keine Rolle,
+      sie sprechen A2A.
+    </p>
+    <div class="block">
+<pre>coordinator.py ──► LiteLLM :4000  ── Registry (Postgres) · A2A-Gateway · LLM-Gateway
+                        │
+          ┌─────────────┼──────────────┐   A2A (message/send, tasks/get)
+          ▼             ▼              ▼
+   inventory :8101  quote :8102   planning :8103
+   Lager (SQLite)   Preisengine   Fertigung (SQLite)</pre>
+    </div>
+  </section>
+
+  <section>
+    <h2>Die drei Fach-Agenten</h2>
+    <div class="tools">
+      <article class="tool">
+        <div class="idx">8101</div>
+        <div><code>inventory-agent</code><span class="kind">Lagerverwaltung</span></div>
+        <p>
+          Artikel, Listenpreise, Lagerorte und Bestände aus dem Produktbestand
+          von Part 1. Prüft eine Bestellmenge und meldet die Fehlmenge.
+        </p>
+      </article>
+      <article class="tool">
+        <div class="idx">8102</div>
+        <div><code>quote-agent</code><span class="kind">Preisengine</span></div>
+        <p>
+          Ein Angebot über alle Positionen: marginale Mengenstaffel aus Part 1,
+          Kundenstatus-Rabatt, Angebotsnummer, Gültigkeit. Ab 10.000 € Summe
+          freigabepflichtig.
+        </p>
+      </article>
+      <article class="tool">
+        <div class="idx">8103</div>
+        <div><code>planning-agent</code><span class="kind">Fertigungssteuerung</span></div>
+        <p>
+          Liefertermine in Arbeitstagen: Lagerware geht sofort in den Versand,
+          Fehlmengen werden auf der passenden Linie eingeplant — Auslastung,
+          Rüstzeit, Tageskapazität, Transport.
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <section>
+    <h2>Dynamic Registry Lookup</h2>
+    <div class="tools">
+      <article class="tool">
+        <div class="idx">1</div>
+        <div><code>agent-card.json</code><span class="kind">Selbstbeschreibung</span></div>
+        <p>Jeder Agent liefert Name, Beschreibung und Skills unter <code>/.well-known/agent-card.json</code>.</p>
+      </article>
+      <article class="tool">
+        <div class="idx">2</div>
+        <div><code>register_agents.py</code><span class="kind">Registrierung</span></div>
+        <p>Liest die Karten und trägt sie in die LiteLLM-Registry ein. Ports und Namen stehen nur dort.</p>
+      </article>
+      <article class="tool">
+        <div class="idx">3</div>
+        <div><code>GET /v1/agents?health_check=true</code><span class="kind">Discovery</span></div>
+        <p>
+          Der Koordinator holt bei jeder Anfrage die gerade erreichbaren Agenten.
+          Die erlaubten Ziele seines Werkzeugs <code>delegate_task</code> sind ein
+          Enum, das jedes Mal neu aus der Registry entsteht.
+        </p>
+      </article>
+      <article class="tool">
+        <div class="idx">4</div>
+        <div><code>submit_final_answer</code><span class="kind">Prüfschleife</span></div>
+        <p>
+          Die Schleife endet erst, wenn jeder Teil der Anfrage abgehakt ist —
+          mit Angabe, welcher Agent ihn erfüllt hat. Das schließt die Lücke von
+          <code>main_dynamic_lookup.py</code> aus der Vorlesung, wo der Router
+          genau einmal zuweist.
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <section>
+    <h2>Was beim Nachrechnen auffiel</h2>
+    <p>
+      Jedes Ergebnis wurde unabhängig gegen die Rechenfunktionen geprüft. Zwei
+      frühe Läufe lieferten plausible, aber falsche Antworten — beide Ursachen
+      sind behoben:
+    </p>
+    <div class="tools">
+      <article class="tool">
+        <div class="idx">!</div>
+        <div><code>Geratener Lagerort</code><span class="kind">Liefertermin</span></div>
+        <p>
+          Ohne Lagerort im Auftrag setzte der Planungs-Agent Innsbruck statt Wien
+          ein — ein Arbeitstag zu früh. Er fragt jetzt nach, statt zu raten, und
+          der Koordinator gibt Kategorie und Lagerort immer mit.
+        </p>
+      </article>
+      <article class="tool">
+        <div class="idx">!</div>
+        <div><code>Aufgeteiltes Angebot</code><span class="kind">Freigabe</span></div>
+        <p>
+          Zwei Einzelangebote zu 2.994,00 € und 7.201,68 € lagen je unter der
+          Freigabegrenze, zusammen bei 10.195,68 € darüber. Das Angebot umfasst
+          jetzt alle Positionen; die Grenze gilt für die Summe.
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <section>
+    <h2>Szenarien und geprüfte Ergebnisse</h2>
+    <table>
+      <caption>Preise unabhängig nachgerechnet · Termine in Arbeitstagen ab Anfrage</caption>
+      <thead>
+        <tr><th>Anfrage</th><th>Angebot</th><th>Rabatt</th><th>Lieferung</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>200× Servomotor 400W, Gold</td><td>50.044,63</td><td>13,69 %</td><td>143 Stk. +2 · 57 Stk. +12</td></tr>
+        <tr><td>50× Druckaufnehmer, Silver</td><td>7.338,66</td><td>6,16 %</td><td>50 Stk. +7 (Wien)</td></tr>
+        <tr><td>3× SPS + 40× IO-Modul, Standard</td><td>10.195,68</td><td>2,77 %</td><td>alles +2</td></tr>
+      </tbody>
+    </table>
+    <p class="caption">Szenario 1 und 3 überschreiten 10.000 € und sind freigabepflichtig (Human-in-the-Loop).</p>
+  </section>
+
+  <section>
+    <h2>Ausschnitt aus dem Ausführungsprotokoll</h2>
+    <div class="shot"><span class="todo">folgt</span><br>Ausschnitt aus <code>logs/coordinator_run.txt</code> nach dem finalen Lauf</div>
+  </section>
+
+  <section>
+    <h2>Abgabe</h2>
+    <div class="slots">
+      <div class="slot">
+        <span class="label">Repository</span>
+        <span class="value"><a href="https://github.com/Matthias-Steinlechner-MCI/Industrial-Computing-Homework/tree/Development/Part2%20-%20Option%20A">github.com/Matthias-Steinlechner-MCI/Industrial-Computing-Homework</a></span>
+      </div>
+      <div class="slot">
+        <span class="label">Branch · Pfad</span>
+        <span class="value">Development · Part2 - Option A/</span>
+      </div>
+      <div class="slot">
+        <span class="label">Starten</span>
+        <span class="value">.\litellm\start_proxy.ps1 → .\start_agents.ps1 → uv run coordinator.py</span>
+      </div>
+      <div class="slot">
+        <span class="label">Protokolle</span>
+        <span class="value">logs/coordinator_run.txt · logs/*_agent.log</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Screenshots</h2>
+    <div class="shots">
+      <div class="shot">Drei Agentenfenster<br>Ports 8101 · 8102 · 8103</div>
+      <div class="shot">Koordinator-Lauf<br>Discover · Runden · Checkliste</div>
+      <div class="shot">LiteLLM Admin-UI<br>registrierte Agenten und Request-Log</div>
+    </div>
+    <p class="caption">Platzhalter — eigene Aufnahmen einsetzen.</p>
+  </section>
+
+  <footer>
+    <span>Matthias Steinlechner</span>
+    <span>MCI · DIBSE Master · Semester 3</span>
+    <span>Industrial Computing · Ch. Maurer</span>
+  </footer>
+
+</div>

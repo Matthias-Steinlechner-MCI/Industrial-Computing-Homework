@@ -78,40 +78,31 @@ ob der Kunde danach alles hat. Der Koordinator hier arbeitet in Runden:
 
 ## Setup
 
-Voraussetzungen: Python ≥ 3.11, [uv](https://docs.astral.sh/uv/), ein
-laufender LiteLLM-Proxy mit Postgres. Eine passende Konfiguration ohne
-Schlüssel liegt unter [`litellm/config.example.yaml`](litellm/config.example.yaml),
-inklusive Startbefehl.
+Voraussetzungen: Python ≥ 3.11, [uv](https://docs.astral.sh/uv/) und der
+LiteLLM-Proxy aus der Repo-Wurzel **mit Postgres** — Installation, A2A-SDK
+und Datenbank stehen in der [Haupt-README](../README.md#litellm-proxy).
 
 ```bash
 uv sync
 cp .env.example .env
 ```
 
-LiteLLM blockiert Agent-Adressen auf `localhost` als SSRF-Schutz. Die
-Agent-Ports müssen in der Proxy-Konfiguration freigegeben sein:
+Zwei Einstellungen im Proxy sind für Part 2 nötig und in
+[`litellm/config.yaml`](../litellm/config.yaml) bereits gesetzt:
 
-```yaml
-general_settings:
-  user_url_allowed_hosts:
-    - "localhost:8101"
-    - "localhost:8102"
-    - "localhost:8103"
-```
-
-Das A2A-Gateway von LiteLLM braucht das A2A-SDK, das `litellm[proxy]` nicht
-mitinstalliert:
-
-```bash
-uv pip install --python "$env:APPDATA\uv\tools\litellm\Scripts\python.exe" "a2a-sdk>=1.1.0,<2.0"
-```
+- **Agent-Ports freigeben.** LiteLLM blockiert Agent-Adressen auf
+  `localhost` als SSRF-Schutz, ausser sie stehen in
+  `general_settings.user_url_allowed_hosts` (hier `localhost:8101` bis `:8103`).
+- **A2A-SDK.** Das Gateway leitet A2A-Nachrichten mit `a2a-sdk` weiter, das
+  `litellm[proxy]` nicht mitinstalliert. Ohne das Paket scheitert jeder
+  Aufruf mit `NoneType takes no arguments`.
 
 ## Starten
 
-**1. Proxy** (eigenes Fenster):
+**1. Proxy** (aus der Repo-Wurzel, eigenes Fenster):
 
 ```bash
-& "..\..\LiteLLM\start_proxy.ps1"
+.\litellm\start_proxy.ps1
 ```
 
 **2. Agenten** — startet alle drei in eigenen Fenstern und registriert sie:
