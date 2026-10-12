@@ -1,0 +1,45 @@
+# Startet die drei Fach-Agenten als getrennte Container.
+# Der LiteLLM-Proxy laeuft weiter auf dem Host (Port 4000).
+#
+# UNGETESTET - siehe Kommentar im Dockerfile.
+#
+#   docker compose -f docker/docker-compose.yml up --build
+#   uv run register_agents.py
+#   uv run coordinator.py
+
+x-agent: &agent
+  build:
+    context: ..
+    dockerfile: docker/Dockerfile
+  env_file: ../.env
+  extra_hosts:
+    - "host.docker.internal:host-gateway"
+  restart: unless-stopped
+
+# Je Dienst: LITELLM_URL zeigt auf den Host (host.docker.internal), die
+# Agent Card nennt localhost, weil LiteLLM auf dem Host laeuft und die
+# Container ueber die veroeffentlichten Ports erreicht.
+services:
+  inventory-agent:
+    <<: *agent
+    environment:
+      AGENT: inventory
+      LITELLM_URL: http://host.docker.internal:4000
+      AGENT_HOST: localhost
+    ports: ["8101:8101"]
+
+  quote-agent:
+    <<: *agent
+    environment:
+      AGENT: quote
+      LITELLM_URL: http://host.docker.internal:4000
+      AGENT_HOST: localhost
+    ports: ["8102:8102"]
+
+  planning-agent:
+    <<: *agent
+    environment:
+      AGENT: planning
+      LITELLM_URL: http://host.docker.internal:4000
+      AGENT_HOST: localhost
+    ports: ["8103:8103"]

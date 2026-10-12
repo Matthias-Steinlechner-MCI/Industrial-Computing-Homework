@@ -1,0 +1,41 @@
+# Minimale LiteLLM-Konfiguration fuer dieses Projekt.
+# Schluessel kommen aus Umgebungsvariablen, nie aus dieser Datei.
+#
+# Start (Postgres noetig, sonst gibt es keine Agent-Registry):
+#   $env:GEMINI_API_KEY     = "<dein Key aus Google AI Studio>"
+#   $env:LITELLM_MASTER_KEY = "sk-1234"
+#   $env:DATABASE_URL       = "postgresql://<user>:<pw>@localhost:5432/litellm"
+#   $env:SSL_CERT_FILE      = "<Bundle mit Firmen-/Antivirus-Root, falls HTTPS gescannt wird>"
+#   litellm --config litellm/config.example.yaml --port 4000
+
+model_list:
+  - model_name: gpt-4o-mini
+    litellm_params:
+      model: gemini/gemini-3.6-flash
+      api_key: os.environ/GEMINI_API_KEY
+  - model_name: gemini-3.5-flash
+    litellm_params:
+      model: gemini/gemini-3.5-flash
+      api_key: os.environ/GEMINI_API_KEY
+  - model_name: gemini-3-flash-preview
+    litellm_params:
+      model: gemini/gemini-3-flash-preview
+      api_key: os.environ/GEMINI_API_KEY
+  - model_name: gemini-3.5-flash-lite
+    litellm_params:
+      model: gemini/gemini-3.5-flash-lite
+      api_key: os.environ/GEMINI_API_KEY
+  - model_name: gemini-flash-lite-latest
+    litellm_params:
+      model: gemini/gemini-flash-lite-latest
+      api_key: os.environ/GEMINI_API_KEY
+
+litellm_settings:
+  drop_params: true
+
+general_settings:
+  # A2A-Agenten auf localhost freigeben (SSRF-Schutz blockt sie sonst)
+  user_url_allowed_hosts:
+    - "localhost:8101"
+    - "localhost:8102"
+    - "localhost:8103"

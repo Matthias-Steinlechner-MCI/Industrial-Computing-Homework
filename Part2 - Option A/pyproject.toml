@@ -1,0 +1,13 @@
+[project]
+name = "part2-option-a"
+version = "0.1.0"
+description = "Distributed remote A2A system with dynamic registry lookup (LiteLLM agent registry)"
+requires-python = ">=3.11"
+dependencies = [
+    "fasta2a[pydantic-ai]>=0.6.1",
+    "pydantic-ai-slim[openai]>=2.18.0",
+    "httpx>=0.28.1",
+    "openai>=2.46.0",
+    "python-dotenv>=1.2.2",
+    "uvicorn>=0.51.0",
+]
