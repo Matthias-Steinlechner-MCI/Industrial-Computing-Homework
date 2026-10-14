@@ -418,14 +418,14 @@
   <section>
     <h2>Szenarien und geprüfte Ergebnisse</h2>
     <table>
-      <caption>Preise unabhängig nachgerechnet · Termine in Arbeitstagen ab Anfrage</caption>
+      <caption>Lauf vom 14.10.2026 · Preise und Termine gegen die Rechenfunktionen geprüft · Lieferung in Arbeitstagen ab Anfrage</caption>
       <thead>
         <tr><th>Anfrage</th><th>Angebot</th><th>Rabatt</th><th>Lieferung</th></tr>
       </thead>
       <tbody>
-        <tr><td>200× Servomotor 400W, Gold</td><td>50.044,63</td><td>13,69 %</td><td>143 Stk. +2 · 57 Stk. +12</td></tr>
-        <tr><td>50× Druckaufnehmer, Silver</td><td>7.338,66</td><td>6,16 %</td><td>50 Stk. +7 (Wien)</td></tr>
-        <tr><td>3× SPS + 40× IO-Modul, Standard</td><td>10.195,68</td><td>2,77 %</td><td>alles +2</td></tr>
+        <tr><td>200× Servomotor 400W, Gold</td><td>50.044,63</td><td>13,69 %</td><td>143 Stk. +2 (16.10.) · 57 Stk. +12 (30.10.)</td></tr>
+        <tr><td>50× Druckaufnehmer, Silver</td><td>7.338,66</td><td>6,16 %</td><td>50 Stk. +7, Wien (23.10.)</td></tr>
+        <tr><td>3× SPS + 40× IO-Modul, Standard</td><td>10.195,68</td><td>2,77 %</td><td>alles +2 (16.10.)</td></tr>
       </tbody>
     </table>
     <p class="caption">Szenario 1 und 3 überschreiten 10.000 € und sind freigabepflichtig (Human-in-the-Loop).</p>
@@ -433,7 +433,40 @@
 
   <section>
     <h2>Ausschnitt aus dem Ausführungsprotokoll</h2>
-    <div class="shot"><span class="todo">folgt</span><br>Ausschnitt aus <code>logs/coordinator_run.txt</code> nach dem finalen Lauf</div>
+    <p>
+      Szenario 1 aus dem Lauf vom 14.10.2026: Runde 1 klärt Bestand und Preis,
+      Runde 2 beauftragt Angebot und Planung parallel mit diesen Zahlen, Runde 3
+      hakt jeden Teil der Anfrage ab. Vollständig in <code>logs/coordinator_run.txt</code>.
+    </p>
+    <div class="block">
+<pre>ANFRAGE 1: Wir sind Gold-Kunde und brauchen 200 Stueck Servomotor 400W.
+           Bitte ein Angebot und den Liefertermin.
+[Discover] Registry liefert 3 erreichbare Agenten: inventory-agent, planning-agent, quote-agent
+
+[Runde 1] Koordinator (gemini-3.5-flash) plant 1 Schritt(e)
+  [Delegate -&gt; inventory-agent] Bitte pruefe den Artikel 'Servomotor 400W' fuer
+      eine Bestellmenge von 200 Stueck. Gib … SKU, Listenpreis, Kategorie, Lagerort,
+      sofort lieferbare Menge und Fehlmenge an.
+  (1 Agent(en) antworteten nach 4.0s)
+  [Result &lt;- inventory-agent] SKU-1001 · drives · 289,90 € · Innsbruck ·
+      sofort lieferbar 143 Stück · Fehlmenge 57 Stück
+
+[Runde 2] Koordinator (gemini-3.5-flash) plant 2 Schritt(e)
+  [Delegate -&gt; quote-agent] … Gold-Kunden … SKU-1001, Listenpreis: 289,90 EUR, Menge: 200
+  [Delegate -&gt; planning-agent] … Kategorie: drives, Lagerort: Innsbruck,
+      sofort lieferbare Menge: 143 Stueck, Fehlmenge: 57 Stueck.
+  (2 Agent(en) antworteten nach 5.3s)
+  [Result &lt;- quote-agent] Angebots-ID Q-20261014-B31D40 … Nach Mengenstaffel:
+      52.129,82 EUR … Endbetrag: 50.044,63 EUR … Freigabegrenze von 10.000 EUR …
+  [Result &lt;- planning-agent] Lagerware (143 Stück) … am 16.10.2026 bei Ihnen …
+      Nachproduktion (57 Stück) … Linie A (Antriebsmontage) … 30.10.2026
+
+[Runde 3] Koordinator (gemini-3.5-flash) plant 1 Schritt(e)
+[Check] Koordinator erklaert die Anfrage fuer vollstaendig beantwortet:
+   [x] Artikel- und Bestandsprüfung (Servomotor 400W, 200 Stück)  &lt;-  inventory-agent
+   [x] Angebotserstellung … Hinweis auf Freigabepflicht  &lt;-  quote-agent
+   [x] Berechnung der Liefertermine für Lagerware und Nachproduktion  &lt;-  planning-agent</pre>
+    </div>
   </section>
 
   <section>

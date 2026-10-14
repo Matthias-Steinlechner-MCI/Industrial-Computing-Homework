@@ -21,14 +21,22 @@ foreach ($a in $agents) {
     Write-Host "gestartet: $($a.Name) auf Port $($a.Port)"
 }
 
-# Warten, bis alle drei ihre Agent Card ausliefern
+# Warten, bis alle drei ihre Agent Card ausliefern.
+# Bewusst 127.0.0.1 statt localhost: Windows PowerShell versucht bei
+# localhost zuerst IPv6 (::1). Die Agenten lauschen nur auf IPv4, und der
+# abgewiesene IPv6-Versuch dauert unter Windows selbst ~2 s - mit kurzem
+# Timeout scheitert dann jeder Versuch, und die Schleife haengt.
+$ProgressPreference = "SilentlyContinue"
 Write-Host "warte auf die Agenten ..."
 foreach ($a in $agents) {
-    $url = "http://localhost:$($a.Port)/.well-known/agent-card.json"
-    for ($i = 0; $i -lt 60; $i++) {
-        try { Invoke-WebRequest $url -UseBasicParsing -TimeoutSec 2 | Out-Null; break }
+    $url = "http://127.0.0.1:$($a.Port)/.well-known/agent-card.json"
+    $ready = $false
+    for ($i = 0; $i -lt 90; $i++) {
+        try { Invoke-WebRequest $url -UseBasicParsing -TimeoutSec 5 | Out-Null; $ready = $true; break }
         catch { Start-Sleep -Seconds 1 }
     }
+    if ($ready) { Write-Host "  bereit: $($a.Name)" }
+    else { Write-Warning "$($a.Name) antwortet nicht - Fehlermeldung im Agentenfenster pruefen." }
 }
 
 Set-Location $root

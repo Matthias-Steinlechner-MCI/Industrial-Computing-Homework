@@ -152,10 +152,11 @@ docker compose -f docker/docker-compose.yml up --build
 
 ## Protokolle
 
-| Datei | Inhalt |
+| Wo | Inhalt |
 |---|---|
 | `logs/coordinator_run.txt` | Vollständiger Lauf: Discovery, Runden, Delegationen, Antworten, Checkliste |
-| `logs/*_agent.log` | Serverlog je Agent (A2A-Requests) |
+| Agentenfenster | Eingehende A2A-Requests je Agent (`message/send`, `tasks/get`) live |
+| LiteLLM Admin-UI → Logs | Jeder Agentenaufruf über das Gateway und jeder LLM-Aufruf mit Modell |
 
 ## Probleme, die unterwegs gelöst wurden
 
