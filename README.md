@@ -13,8 +13,9 @@ gemeinsamer LiteLLM-Proxy.
 | Part 2 | Drei A2A-Agenten auf eigenen Ports, Koordinator mit dynamischem Registry-Lookup | [`Part2 - Option A`](Part2%20-%20Option%20A) |
 
 Jeder Ordner hat eine eigene README mit Setup, Startbefehlen und Szenarien
-sowie ein Ein-Seiten-Abgabedokument — für Part 2 als
-[`submission.pdf`](Part2%20-%20Option%20A/submission.pdf).
+sowie ein Ein-Seiten-Abgabedokument als PDF:
+[Part 1](Part1%20-%20Option%20A/submission.pdf) ·
+[Part 2](Part2%20-%20Option%20A/submission.pdf).
 
 ## Gemeinsame Voraussetzungen
 

@@ -4,6 +4,9 @@ MCP-Server mit drei Tools plus ReAct-Agent, der die Tools über einen
 LiteLLM-Proxy ansteuert. Aufgebaut auf dem Basiscode der Vorlesung
 (Sample 3 und Sample 4).
 
+**Abgabedokument:** [`submission.pdf`](submission.pdf) (eine Seite) · Screenshots in voller
+Auflösung unter [`screenshots/`](screenshots).
+
 ## Architektur
 
 ```

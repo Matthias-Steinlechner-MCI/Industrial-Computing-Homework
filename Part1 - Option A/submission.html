@@ -276,6 +276,64 @@
     .sheet { gap: 20px; max-width: none; }
     .shot { padding: 14px; }
   }
+
+  /* ---------- Screenshots ---------- */
+  .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+  .gallery figure { margin: 0; display: flex; flex-direction: column; gap: 7px; }
+  .gallery a { display: block; border: 1px solid var(--rule); background: var(--card); }
+  .gallery a:hover { border-color: var(--signal); }
+  .gallery img { display: block; width: 100%; height: 190px; object-fit: cover; object-position: top left; }
+  .gallery figcaption { font-size: 13.5px; line-height: 1.5; color: var(--ink-soft); }
+  .gallery figcaption strong { color: var(--ink); font-family: var(--display); font-weight: 600; }
+  .cap-print, .print-only { display: none; }
+  /* Breiter UI-Screenshot: Ausschnitt auf die Log-Tabelle statt die Seitenleiste */
+  .gallery img.crop-table { object-position: 16% top; }
+
+  /* ---------- Druck: eine A4-Seite ---------- */
+  @media print {
+    @page { size: A4; margin: 10mm 12mm; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    body { font-size: 8.6pt; line-height: 1.38; padding: 0; background: #fff; }
+    .sheet { gap: 2.8mm; max-width: none; }
+    .sec-log, .sec-arch > p, .sec-calc > p, .caption { display: none; }
+    .cap-web { display: none; }
+    .cap-print { display: inline; }
+    .print-only { display: block; }
+    .sec-calc table { display: none; }
+    .masthead { gap: 1.6mm; order: 1; }
+    .specs { order: 2; grid-template-columns: repeat(5, 1fr); }
+    .sec-arch { order: 3; }
+    .sec-submit { order: 4; }
+    .sec-tools { order: 5; }
+    .sec-calc { order: 6; }
+    .sec-shots { order: 7; }
+    footer { order: 8; padding-top: 2mm; font-size: 6.5pt; }
+    h1 { font-size: 17pt; }
+    .standfirst { font-size: 9pt; max-width: none; }
+    .stamp { font-size: 6.5pt; }
+    h2 { font-size: 7pt; padding-bottom: 1mm; border-bottom-width: 1.2pt; }
+    section { gap: 1.8mm; }
+    .spec { padding: 1.4mm 2.4mm; }
+    .spec dt { font-size: 5.8pt; }
+    .spec dd { font-size: 8.5pt; }
+    .block pre { font-size: 7.2pt; line-height: 1.4; padding: 2mm 3mm; }
+    .slot { padding: 1.2mm 3mm; }
+    .slot .label { font-size: 6pt; min-width: 26mm; }
+    .slot .value { font-size: 7.6pt; }
+    .tools { display: grid; grid-template-columns: repeat(3, 1fr); }
+    .tool { padding: 1.8mm 2.6mm; gap: 0.6mm 2mm; grid-template-columns: 6mm 1fr; align-content: start; }
+    .tool .kind { display: block; margin-left: 0; }
+    .tool code { font-size: 8pt; }
+    .tool p { font-size: 7.6pt; line-height: 1.35; }
+    th, td { padding: 0.8mm 2.4mm; font-size: 8pt; }
+    th:first-child, td:first-child { font-size: 7.6pt; }
+    thead th { font-size: 6.2pt; }
+    caption { font-size: 6.4pt; padding-bottom: 1mm; }
+    .gallery { grid-template-columns: repeat(3, 1fr); gap: 3mm; }
+    .gallery figure { gap: 1mm; break-inside: avoid; }
+    .gallery img { height: 38mm; }
+    .gallery figcaption { font-size: 7pt; line-height: 1.3; }
+  }
 </style>
 
 <div class="sheet">
@@ -296,10 +354,10 @@
     <div class="spec"><dt>Sprache</dt><dd>Python 3.12</dd></div>
     <div class="spec"><dt>MCP-Framework</dt><dd>FastMCP</dd></div>
     <div class="spec"><dt>Gateway</dt><dd>LiteLLM :4000</dd></div>
-    <div class="spec"><dt>Modell</dt><dd>Azure gpt-5-mini</dd></div>
+    <div class="spec"><dt>Modell (Alias)</dt><dd>gpt-5-mini · Gemini</dd></div>
   </dl>
 
-  <section>
+  <section class="sec-arch">
     <h2>Aufbau</h2>
     <p>
       Der Client kennt die Werkzeuge nicht im Voraus. Er fragt den MCP-Server
@@ -308,8 +366,8 @@
       im Server erscheint deshalb ohne eine einzige Codeänderung im Client.
     </p>
     <div class="block">
-<pre>client.py  ──HTTP──►  LiteLLM-Proxy  ──►  Azure OpenAI (gpt-5-mini)
-   │                  localhost:4000       Gemini als Ausweichpfad
+<pre>client.py  ──HTTP──►  LiteLLM-Proxy  ──►  LLM hinter dem Alias gpt-4o-mini
+   │                  localhost:4000       31.08.: Azure gpt-5-mini · 14.10.: Gemini
    │
    └──MCP streamable-http──►  server.py   localhost:8010/mcp
                                 ├── lookup_products          → SQLite
@@ -318,10 +376,10 @@
                                 ├── resource audit://log
                                 └── resource inventory://schema</pre>
     </div>
-    <p class="caption">Der Modellname <code>gpt-4o-mini</code> ist nur ein Alias im Proxy — dahinter liegt ein Azure-Deployment <code>gpt-5-mini</code>. Anbieterwechsel ist Konfiguration, nicht Code.</p>
+    <p class="caption">Der Modellname <code>gpt-4o-mini</code> ist nur ein Alias im Proxy. Die Protokolle vom 31.08. entstanden mit Azure <code>gpt-5-mini</code>, die Screenshots vom 14.10. mit Gemini — am Client wurde dafür nichts geändert.</p>
   </section>
 
-  <section>
+  <section class="sec-tools">
     <h2>Die drei Werkzeuge</h2>
     <div class="tools">
       <article class="tool">
@@ -357,7 +415,7 @@
     </div>
   </section>
 
-  <section>
+  <section class="sec-calc">
     <h2>Rechenweg der Formelmaschine</h2>
     <p>
       Die Staffel wirkt <em>marginal</em> — jede Stufe gilt nur für die Stück in
@@ -382,39 +440,41 @@
       </tfoot>
     </table>
     <p class="caption">Listenpreis 8.550,00 € · Ersparnis 1.300,04 €</p>
+    <div class="block print-only"><pre>250 × 34,20 € (Gold):  9×0 % + 40×5 % + 150×12 % + 51×18 %  →  7.552,04 €
+                       − Gold 4 %  →  7.249,96 €   (Liste 8.550,00 €, −15,21 %, nachgerechnet)</pre></div>
   </section>
 
-  <section>
+  <section class="sec-log">
     <h2>Ausschnitt aus dem Ausführungsprotokoll</h2>
     <p>
-      Szenario 2 verkettet alle drei Werkzeuge: Datenbankabfrage, Rabattrechnung,
-      Protokolleintrag. Der vollständige Lauf liegt in
-      <code>logs/execution_log.txt</code>.
+      Szenario 2 aus dem Lauf vom 31.08.2026. Die erste Suche schreibt „Naeherungssensor"
+      und findet nichts; das Modell wertet die leere Antwort aus und sucht mit „M12" erneut —
+      genau die Schleife aus Denken, Handeln und Beobachten, für die ReAct steht. Vollständig
+      in <code>logs/execution_log.txt</code>.
     </p>
     <div class="block">
-<pre>SZENARIO 2: Ein Kunde mit Gold-Status will 250 Stueck des Naeherungssensors M12.
+<pre>SZENARIO 2: Ein Kunde mit Gold-Status will 250 Stueck des Naeherungssensors M12. …
 
 [Reasoning 1] Anfrage an das Modell (gpt-4o-mini) ...
-[Action]      lookup_products({"search": "Näherungssensor M12", "limit": 5})
+[Action] lookup_products({"search": "Naeherungssensor M12", "category": "sensors", …})
+[Observation]
+[Reasoning 2] Anfrage an das Modell (gpt-4o-mini) ...
+[Action] lookup_products({"search": "M12", "category": "sensors", …})
 [Observation] [{"sku":"SKU-2001","name":"Näherungssensor M12","category":"sensors",
                "unit_price":34.2,"stock":870,"warehouse":"Innsbruck"}]
-
-[Reasoning 2] Anfrage an das Modell (gpt-4o-mini) ...
-[Action]      compute_tiered_discount({"unit_price": 34.2, "quantity": 250,
-                                       "customer_tier": "gold"})
-[Observation] {"list_total":8550.0, ... "final_total":7249.96,
-               "total_saved":1300.04, "effective_discount":0.1521}
-
 [Reasoning 3] Anfrage an das Modell (gpt-4o-mini) ...
-[Action]      append_audit_event({"event": "quote_created", "details": "..."})
-[Observation] {"written":"2026-08-31T18:28:03+00:00 | quote_created | ...",
-               "line_number":1}
-
-[Final Answer] Endpreis 7.249,96 EUR, effektiver Gesamtrabatt 15,21 %.</pre>
+[Action] compute_tiered_discount({"unit_price": 34.2, "quantity": 250, "customer_tier": "gold"})
+[Observation] {"quantity":250,"unit_price":34.2,"list_total":8550.0, …}
+[Reasoning 4] Anfrage an das Modell (gpt-4o-mini) ...
+[Action] append_audit_event({"event": "quote_created", "details": "Kunde: Gold-Status; …"})
+[Observation] {"written":"2026-08-31T18:28:03+00:00 | quote_created | …"}
+[Reasoning 5] Anfrage an das Modell (gpt-4o-mini) ...
+[Final Answer] … Endpreis (nach Staffel + Gold-Nachlass): 7.249,96 EUR
+               … Effektiver Gesamtrabatt ≈ 15.21%</pre>
     </div>
   </section>
 
-  <section>
+  <section class="sec-submit">
     <h2>Abgabe</h2>
     <div class="slots">
       <div class="slot">
@@ -424,6 +484,10 @@
       <div class="slot">
         <span class="label">Branch · Pfad</span>
         <span class="value">Development · Part1 - Option A/</span>
+      </div>
+      <div class="slot">
+        <span class="label">Starten</span>
+        <span class="value">.\litellm\start_proxy.ps1 → uv run server.py → uv run client.py</span>
       </div>
       <div class="slot">
         <span class="label">Einstieg</span>
@@ -436,14 +500,29 @@
     </div>
   </section>
 
-  <section>
+  <section class="sec-shots">
     <h2>Screenshots</h2>
-    <div class="shots">
-      <div class="shot">Terminal — MCP-Server<br>mit Tool-Registrierung</div>
-      <div class="shot">Terminal — ReAct-Lauf<br>Reasoning / Action / Observation</div>
-      <div class="shot">LiteLLM Admin-UI<br>Request-Log der drei Szenarien</div>
+    <div class="gallery">
+      <figure>
+        <a href="screenshots/server.png" target="_blank" rel="noopener"><img src="screenshots/server.png" alt="Fenster des MCP-Servers auf Port 8010 mit eingehenden MCP-Anfragen"></a>
+        <figcaption><strong>MCP-Server.</strong><span class="cap-web"> FastMCP auf <code>:8010</code>.
+          Jede Zeile <code>POST /mcp</code> ist ein MCP-Aufruf des Clients: Tools und Resources
+          auflisten, drei Tool-Aufrufe, Resource lesen; <code>DELETE</code> beendet die Sitzung.</span><span class="cap-print"> FastMCP auf :8010; jedes <code>POST /mcp</code> ist ein MCP-Aufruf des Clients.</span></figcaption>
+      </figure>
+      <figure>
+        <a href="screenshots/client.png" target="_blank" rel="noopener"><img src="screenshots/client.png" alt="ReAct-Client: entdeckte Tools, vier Reasoning-Schritte, drei Actions, Endpreis 7.249,96 EUR"></a>
+        <figcaption><strong>ReAct-Lauf.</strong><span class="cap-web"> Entdeckte Tools und Resources,
+          dann Lookup, Rabattrechnung und Audit-Eintrag bis zum Endpreis von 7.249,96 € — wie am 31.08.
+          Gestartet als <code>client.py 2</code>, deshalb steht oben „SZENARIO 1".</span><span class="cap-print"> Lookup, Rabatt, Audit-Eintrag; Endpreis 7.249,96 € wie am 31.08.</span></figcaption>
+      </figure>
+      <figure>
+        <a href="screenshots/litellm-logs.png" target="_blank" rel="noopener"><img class="crop-table" src="screenshots/litellm-logs.png" alt="LiteLLM Request-Log mit vier LLM-Aufrufen"></a>
+        <figcaption><strong>Gateway-Log.</strong><span class="cap-web"> Vier LLM-Aufrufe in drei
+          Sekunden — einer pro Reasoning-Schritt. Kontrolllauf vom 14.10. mit
+          <code>gemini-3.5-flash-lite</code> hinter dem Proxy.</span><span class="cap-print"> Vier LLM-Aufrufe, einer pro Reasoning-Schritt (Gemini, 14.10.).</span></figcaption>
+      </figure>
     </div>
-    <p class="caption">Platzhalter — eigene Aufnahmen einsetzen.</p>
+    <p class="caption">Screenshots vom Kontrolllauf am 14.10.2026 · Bilder anklicken für die volle Auflösung.</p>
   </section>
 
   <footer>
