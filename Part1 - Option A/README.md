@@ -162,8 +162,10 @@ erzwingen:
 Alias im Proxy. Die Protokolle in `logs/` entstanden am 31.08.2026 mit einem
 Azure-Deployment `gpt-5-mini` hinter diesem Alias. Nach dem Ablauf des
 Azure-Testabos zeigt der Alias in [`litellm/config.yaml`](../litellm/config.yaml)
-auf Gemini — der Client blieb dabei unverändert. Der Wechsel des Anbieters ist
-eine Konfigurationsänderung im Proxy, keine Codeänderung: genau der Zweck
+auf Gemini — der Client blieb dabei unverändert. Ein Kontrolllauf von
+Szenario 2 am 14.10.2026 mit `gemini-3-flash-preview` lieferte dieselben drei
+Tool-Aufrufe und denselben Endpreis von 7.249,96 €. Der Wechsel des Anbieters
+ist eine Konfigurationsänderung im Proxy, keine Codeänderung: genau der Zweck
 eines LLM-Gateways.
 
 **`temperature` und Reasoning-Modelle.** Reasoning-Modelle wie `gpt-5-mini`
