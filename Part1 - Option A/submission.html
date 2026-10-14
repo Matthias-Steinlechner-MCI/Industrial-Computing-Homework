@@ -331,8 +331,18 @@
     caption { font-size: 6.4pt; padding-bottom: 1mm; }
     .gallery { grid-template-columns: repeat(3, 1fr); gap: 3mm; }
     .gallery figure { gap: 1mm; break-inside: avoid; }
-    .gallery img { height: 38mm; }
+    .gallery img { height: 30mm; }
     .gallery figcaption { font-size: 7pt; line-height: 1.3; }
+  }
+  /* ---------- KI-Hinweis ---------- */
+  .ai-note { max-width: none; color: var(--ink-soft); font-size: 15px; }
+  @media print {
+    .sec-ai { order: 8; }
+    footer { order: 9; }
+    .sec-ai h2 { display: none; }
+    .ai-note { font-size: 7pt; line-height: 1.35; border-top: 1px solid var(--rule); padding-top: 1.6mm; }
+    .ai-note::before { content: "Einsatz von KI: "; font-family: var(--display); font-weight: 600; color: var(--ink); }
+    footer { border-top: none; padding-top: 0; }
   }
 </style>
 
@@ -523,6 +533,16 @@
       </figure>
     </div>
     <p class="caption">Screenshots vom Kontrolllauf am 14.10.2026 · Bilder anklicken für die volle Auflösung.</p>
+  </section>
+
+  <section class="sec-ai">
+    <h2>Einsatz von KI</h2>
+    <p class="ai-note">
+      Claude (Anthropic) habe ich als Hilfsmittel verwendet. Konzeption, Umsetzung
+      und Programmierung habe ich selbst durchgeführt. Claude diente lediglich zum
+      Erstellen der Abgabedokumente sowie als Hilfestellung bei einzelnen Schritten,
+      bei denen ich nicht mehr weitergewusst habe.
+    </p>
   </section>
 
   <footer>

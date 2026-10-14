@@ -205,3 +205,10 @@ Antwort zu erfinden.
 **Avast und HTTPS.** Avast bricht HTTPS mit einem eigenen Wurzelzertifikat
 auf, dem Python nicht vertraut. Der Proxy bekommt per `SSL_CERT_FILE` ein
 Bundle aus certifi und dem Windows-Wurzelspeicher.
+
+## Einsatz von KI
+
+Claude (Anthropic) habe ich als Hilfsmittel verwendet. Konzeption, Umsetzung
+und Programmierung habe ich selbst durchgeführt. Claude diente lediglich zum
+Erstellen der Abgabedokumente sowie als Hilfestellung bei einzelnen Schritten,
+bei denen ich nicht mehr weitergewusst habe.

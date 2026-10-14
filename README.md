@@ -86,3 +86,10 @@ aktivierten Entwicklermodus).
 - **429 / „quota exceeded"** — Free-Tier-Kontingent des Modells für heute
   aufgebraucht. In `litellm/config.yaml` ein anderes Modell hinter den Alias
   hängen oder am nächsten Tag weitermachen.
+
+## Einsatz von KI
+
+Claude (Anthropic) habe ich als Hilfsmittel verwendet. Konzeption, Umsetzung
+und Programmierung habe ich selbst durchgeführt. Claude diente lediglich zum
+Erstellen der Abgabedokumente sowie als Hilfestellung bei einzelnen Schritten,
+bei denen ich nicht mehr weitergewusst habe.

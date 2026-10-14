@@ -180,3 +180,10 @@ Parameter still entfernt, statt den Request mit HTTP 400 abzuweisen.
 nach Version zwei oder drei Werte, und das Feld des Tool-Schemas heißt
 `inputSchema` oder `input_schema`. Der Client behandelt beide Varianten, damit
 er sowohl mit der Version aus Sample 4 als auch mit der aktuellen läuft.
+
+## Einsatz von KI
+
+Claude (Anthropic) habe ich als Hilfsmittel verwendet. Konzeption, Umsetzung
+und Programmierung habe ich selbst durchgeführt. Claude diente lediglich zum
+Erstellen der Abgabedokumente sowie als Hilfestellung bei einzelnen Schritten,
+bei denen ich nicht mehr weitergewusst habe.
