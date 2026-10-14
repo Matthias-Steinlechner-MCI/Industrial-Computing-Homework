@@ -7,6 +7,9 @@ Laufzeit in der LiteLLM-Agent-Registry und spricht sie per A2A an.
 
 Die Domäne setzt Part 1 fort: gleicher Produktbestand, gleiche Rabattstaffel.
 
+**Abgabedokument:** [`submission.pdf`](submission.pdf) (eine Seite) · Screenshots in voller
+Auflösung unter [`screenshots/`](screenshots).
+
 ## Architektur
 
 ```

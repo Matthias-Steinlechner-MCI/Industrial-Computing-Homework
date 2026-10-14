@@ -287,6 +287,48 @@
   .gallery figcaption strong { color: var(--ink); font-family: var(--display); font-weight: 600; }
   .gallery .shot { height: 190px; display: flex; align-items: center; justify-content: center; padding: 0 18px; }
   @media print { .gallery img, .gallery .shot { height: 150px; } }
+
+  /* ---------- Druck: eine A4-Seite ---------- */
+  .cap-print, .print-only { display: none; }
+  @media print {
+    @page { size: A4; margin: 10mm 12mm; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    body { font-size: 8.6pt; line-height: 1.38; padding: 0; background: #fff; }
+    .sheet { gap: 2.8mm; max-width: none; }
+    .sec-agents, .sec-registry, .sec-findings, .sec-log, .sec-arch > p, .caption { display: none; }
+    .cap-web { display: none; }
+    .cap-print { display: inline; }
+    .print-only { display: flex; }
+    .masthead { gap: 1.6mm; order: 1; }
+    .specs { order: 2; }
+    .sec-arch { order: 3; }
+    .sec-submit { order: 4; }
+    .sec-results { order: 5; }
+    .sec-shots { order: 6; }
+    footer { order: 7; padding-top: 2mm; }
+    h1 { font-size: 17pt; }
+    .standfirst { font-size: 9pt; max-width: none; }
+    .stamp { font-size: 6.5pt; }
+    h2 { font-size: 7pt; padding-bottom: 1mm; border-bottom-width: 1.2pt; }
+    section { gap: 1.8mm; }
+    .specs { grid-template-columns: repeat(5, 1fr); }
+    .spec { padding: 1.4mm 2.4mm; }
+    .spec dt { font-size: 5.8pt; }
+    .spec dd { font-size: 8.5pt; }
+    .block pre { font-size: 7.2pt; line-height: 1.4; padding: 2mm 3mm; }
+    .slot { padding: 1.4mm 3mm; }
+    .slot .label { font-size: 6pt; min-width: 26mm; }
+    .slot .value { font-size: 7.6pt; }
+    th, td { padding: 1mm 2.4mm; font-size: 8pt; }
+    th:first-child, td:first-child { font-size: 7.6pt; }
+    thead th { font-size: 6.2pt; }
+    caption { font-size: 6.4pt; padding-bottom: 1mm; }
+    .gallery { grid-template-columns: 1fr 1fr; gap: 3mm; }
+    .gallery figure { gap: 1mm; break-inside: avoid; }
+    .gallery img { height: 35mm; }
+    .gallery figcaption { font-size: 7pt; line-height: 1.3; }
+    footer { font-size: 6.5pt; }
+  }
 </style>
 
 <div class="sheet">
@@ -311,7 +353,7 @@
     <div class="spec"><dt>Framework</dt><dd>fasta2a · pydantic-ai</dd></div>
   </dl>
 
-  <section>
+  <section class="sec-arch">
     <h2>Aufbau</h2>
     <p>
       Jeder Agent sieht nur sein eigenes System. Wer Daten aus einem anderen
@@ -330,7 +372,7 @@
     </div>
   </section>
 
-  <section>
+  <section class="sec-agents">
     <h2>Die drei Fach-Agenten</h2>
     <div class="tools">
       <article class="tool">
@@ -362,7 +404,7 @@
     </div>
   </section>
 
-  <section>
+  <section class="sec-registry">
     <h2>Dynamic Registry Lookup</h2>
     <div class="tools">
       <article class="tool">
@@ -397,7 +439,7 @@
     </div>
   </section>
 
-  <section>
+  <section class="sec-findings">
     <h2>Was beim Nachrechnen auffiel</h2>
     <p>
       Jedes Ergebnis wurde unabhängig gegen die Rechenfunktionen geprüft. Zwei
@@ -426,7 +468,7 @@
     </div>
   </section>
 
-  <section>
+  <section class="sec-results">
     <h2>Szenarien und geprüfte Ergebnisse</h2>
     <table>
       <caption>Lauf vom 14.10.2026 · Preise und Termine gegen die Rechenfunktionen geprüft · Lieferung in Arbeitstagen ab Anfrage</caption>
@@ -442,7 +484,7 @@
     <p class="caption">Szenario 1 und 3 überschreiten 10.000 € und sind freigabepflichtig (Human-in-the-Loop).</p>
   </section>
 
-  <section>
+  <section class="sec-log">
     <h2>Ausschnitt aus dem Ausführungsprotokoll</h2>
     <p>
       Szenario 1 aus dem Lauf vom 14.10.2026: Runde 1 klärt Bestand und Preis,
@@ -480,7 +522,7 @@
     </div>
   </section>
 
-  <section>
+  <section class="sec-submit">
     <h2>Abgabe</h2>
     <div class="slots">
       <div class="slot">
@@ -495,41 +537,45 @@
         <span class="label">Starten</span>
         <span class="value">.\litellm\start_proxy.ps1 → .\start_agents.ps1 → uv run coordinator.py</span>
       </div>
+      <div class="slot print-only">
+        <span class="label">Details</span>
+        <span class="value">Agenten, Registry-Lookup, gefundene Fehler und Protokoll: README.md im Ordner</span>
+      </div>
       <div class="slot">
         <span class="label">Protokolle</span>
-        <span class="value">logs/coordinator_run.txt · logs/*_agent.log</span>
+        <span class="value">logs/coordinator_run.txt · Agentenfenster · LiteLLM-UI → Logs</span>
       </div>
     </div>
   </section>
 
-  <section>
+  <section class="sec-shots">
     <h2>Screenshots</h2>
     <div class="gallery">
       <figure>
         <a href="screenshots/agents.png" target="_blank" rel="noopener"><img src="screenshots/agents.png" alt="Drei PowerShell-Fenster der Agenten auf den Ports 8101, 8102 und 8103 mit eingehenden A2A-Requests"></a>
-        <figcaption><strong>Drei Prozesse, drei Ports.</strong> Agent Card, Health-Check der
+        <figcaption><strong>Drei Prozesse, drei Ports.</strong><span class="cap-web"> Agent Card, Health-Check der
           Registry, dann <code>POST /</code> für <code>message/send</code> und <code>tasks/get</code>.
           Das rote <code>GET / 405</code> ist kein Fehler: Der Health-Check fragt per GET,
-          der A2A-Endpunkt nimmt nur POST an — LiteLLM wertet jeden Status unter 500 als erreichbar.</figcaption>
+          der A2A-Endpunkt nimmt nur POST an — LiteLLM wertet jeden Status unter 500 als erreichbar.</span><span class="cap-print"> Agent Card, Registry-Health-Check (405 = GET auf den POST-Endpunkt, kein Fehler), dann die A2A-Requests.</span></figcaption>
       </figure>
       <figure>
         <a href="screenshots/coordinator-run.webp" target="_blank" rel="noopener"><img src="screenshots/coordinator-run.webp" alt="Protokoll des Koordinators, Szenario 1: Discover, drei Runden, Checkliste"></a>
-        <figcaption><strong>Koordinator-Lauf.</strong> Szenario 1 in
+        <figcaption><strong>Koordinator-Lauf.</strong><span class="cap-web"> Szenario 1 in
           <code>logs/coordinator_run.txt</code>: Discover, Bestand in Runde 1, Angebot und
-          Planung parallel in Runde 2, abgehakte Checkliste in Runde 3.</figcaption>
+          Planung parallel in Runde 2, abgehakte Checkliste in Runde 3.</span><span class="cap-print"> Szenario 1: Bestand, dann Angebot und Planung parallel, Checkliste.</span></figcaption>
       </figure>
       <figure>
         <a href="screenshots/litellm-agents.webp" target="_blank" rel="noopener"><img src="screenshots/litellm-agents.webp" alt="LiteLLM Admin-UI, Seite Agents mit drei registrierten Agenten"></a>
-        <figcaption><strong>Registry.</strong> Die drei Agenten in LiteLLM, eingetragen von
+        <figcaption><strong>Registry.</strong><span class="cap-web"> Die drei Agenten in LiteLLM, eingetragen von
           <code>register_agents.py</code>. „Needs Setup" zeigt nur an, dass kein eigener
-          Virtual Key zugewiesen ist — lokal nicht nötig.</figcaption>
+          Virtual Key zugewiesen ist — lokal nicht nötig.</span><span class="cap-print"> Die drei Agenten in der LiteLLM-Registry.</span></figcaption>
       </figure>
       <figure>
         <a href="screenshots/litellm-logs.webp" target="_blank" rel="noopener"><img src="screenshots/litellm-logs.webp" alt="LiteLLM Admin-UI, Logs mit Agent- und LLM-Aufrufen"></a>
-        <figcaption><strong>Gateway-Log.</strong> Typ „Agent" sind die A2A-Aufrufe
+        <figcaption><strong>Gateway-Log.</strong><span class="cap-web"> Typ „Agent" sind die A2A-Aufrufe
           (<code>a2a_agent/…</code>), Typ „LLM" die Modellaufrufe der Agenten (pydantic-ai) und
           des Koordinators. Die roten Zeilen sind vom Free Tier abgelehnte Versuche (429), auf
-          die der Koordinator mit Modellwechsel reagiert.</figcaption>
+          die der Koordinator mit Modellwechsel reagiert.</span><span class="cap-print"> A2A- und LLM-Aufrufe; rote Zeilen = 429 des Free Tiers, Modellwechsel.</span></figcaption>
       </figure>
     </div>
     <p class="caption">Bilder anklicken für die volle Auflösung.</p>
