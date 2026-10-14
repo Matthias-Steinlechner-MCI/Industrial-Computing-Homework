@@ -276,6 +276,17 @@
     .sheet { gap: 20px; max-width: none; }
     .shot { padding: 14px; }
   }
+
+  /* ---------- Screenshots ---------- */
+  .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
+  .gallery figure { margin: 0; display: flex; flex-direction: column; gap: 7px; }
+  .gallery a { display: block; border: 1px solid var(--rule); background: var(--card); }
+  .gallery a:hover { border-color: var(--signal); }
+  .gallery img { display: block; width: 100%; height: 190px; object-fit: cover; object-position: top left; }
+  .gallery figcaption { font-size: 13.5px; line-height: 1.5; color: var(--ink-soft); }
+  .gallery figcaption strong { color: var(--ink); font-family: var(--display); font-weight: 600; }
+  .gallery .shot { height: 190px; display: flex; align-items: center; justify-content: center; padding: 0 18px; }
+  @media print { .gallery img, .gallery .shot { height: 150px; } }
 </style>
 
 <div class="sheet">
@@ -493,12 +504,35 @@
 
   <section>
     <h2>Screenshots</h2>
-    <div class="shots">
-      <div class="shot">Drei Agentenfenster<br>Ports 8101 · 8102 · 8103</div>
-      <div class="shot">Koordinator-Lauf<br>Discover · Runden · Checkliste</div>
-      <div class="shot">LiteLLM Admin-UI<br>registrierte Agenten und Request-Log</div>
+    <div class="gallery">
+      <figure>
+        <a href="screenshots/agents.png" target="_blank" rel="noopener"><img src="screenshots/agents.png" alt="Drei PowerShell-Fenster der Agenten auf den Ports 8101, 8102 und 8103 mit eingehenden A2A-Requests"></a>
+        <figcaption><strong>Drei Prozesse, drei Ports.</strong> Agent Card, Health-Check der
+          Registry, dann <code>POST /</code> für <code>message/send</code> und <code>tasks/get</code>.
+          Das rote <code>GET / 405</code> ist kein Fehler: Der Health-Check fragt per GET,
+          der A2A-Endpunkt nimmt nur POST an — LiteLLM wertet jeden Status unter 500 als erreichbar.</figcaption>
+      </figure>
+      <figure>
+        <a href="screenshots/coordinator-run.webp" target="_blank" rel="noopener"><img src="screenshots/coordinator-run.webp" alt="Protokoll des Koordinators, Szenario 1: Discover, drei Runden, Checkliste"></a>
+        <figcaption><strong>Koordinator-Lauf.</strong> Szenario 1 in
+          <code>logs/coordinator_run.txt</code>: Discover, Bestand in Runde 1, Angebot und
+          Planung parallel in Runde 2, abgehakte Checkliste in Runde 3.</figcaption>
+      </figure>
+      <figure>
+        <a href="screenshots/litellm-agents.webp" target="_blank" rel="noopener"><img src="screenshots/litellm-agents.webp" alt="LiteLLM Admin-UI, Seite Agents mit drei registrierten Agenten"></a>
+        <figcaption><strong>Registry.</strong> Die drei Agenten in LiteLLM, eingetragen von
+          <code>register_agents.py</code>. „Needs Setup" zeigt nur an, dass kein eigener
+          Virtual Key zugewiesen ist — lokal nicht nötig.</figcaption>
+      </figure>
+      <figure>
+        <a href="screenshots/litellm-logs.webp" target="_blank" rel="noopener"><img src="screenshots/litellm-logs.webp" alt="LiteLLM Admin-UI, Logs mit Agent- und LLM-Aufrufen"></a>
+        <figcaption><strong>Gateway-Log.</strong> Typ „Agent" sind die A2A-Aufrufe
+          (<code>a2a_agent/…</code>), Typ „LLM" die Modellaufrufe der Agenten (pydantic-ai) und
+          des Koordinators. Die roten Zeilen sind vom Free Tier abgelehnte Versuche (429), auf
+          die der Koordinator mit Modellwechsel reagiert.</figcaption>
+      </figure>
     </div>
-    <p class="caption">Platzhalter — eigene Aufnahmen einsetzen.</p>
+    <p class="caption">Bilder anklicken für die volle Auflösung.</p>
   </section>
 
   <footer>
